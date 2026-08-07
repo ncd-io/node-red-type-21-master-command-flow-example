@@ -1,0 +1,329 @@
+[
+    {
+        "id": "ba419cd70b9242b5",
+        "type": "tab",
+        "label": "Type 21 - Set Range",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "45c8b3f2c99920b2",
+        "type": "group",
+        "z": "ba419cd70b9242b5",
+        "name": "Configure Range Options",
+        "style": {
+            "label": true
+        },
+        "nodes": [
+            "29a26b0f555067a3",
+            "2f884b75ea160877",
+            "e8a2f29b7bd43028"
+        ],
+        "x": 134,
+        "y": 79,
+        "w": 572,
+        "h": 122
+    },
+    {
+        "id": "e0e455d2e0871e77",
+        "type": "group",
+        "z": "ba419cd70b9242b5",
+        "name": "Configuration Execution",
+        "style": {
+            "label": true
+        },
+        "nodes": [
+            "cbf36a47196c9305",
+            "95dc2fe924238366",
+            "8a1f9a771031a5d2",
+            "a430970ed38cbc82",
+            "2e1fb426f0f04354",
+            "5b763922e0559236"
+        ],
+        "x": 134,
+        "y": 259,
+        "w": 862,
+        "h": 222
+    },
+    {
+        "id": "d83262eda86f55c7",
+        "type": "group",
+        "z": "ba419cd70b9242b5",
+        "name": "Type and Range Options Information",
+        "style": {
+            "label": true
+        },
+        "nodes": [
+            "3e6ed4f76358178c",
+            "37d93268d3ca922e",
+            "d40fefc08e392c4d",
+            "2dc590b0995e8d2a",
+            "629880c82a10ea7a",
+            "b53e52385344b629"
+        ],
+        "x": 124,
+        "y": 539,
+        "w": 1042,
+        "h": 830
+    },
+    {
+        "id": "cbf36a47196c9305",
+        "type": "ncd-gateway-node",
+        "z": "ba419cd70b9242b5",
+        "g": "e0e455d2e0871e77",
+        "name": "",
+        "connection": "",
+        "unknown_devices": 0,
+        "outputs": 1,
+        "x": 270,
+        "y": 360,
+        "wires": [
+            [
+                "95dc2fe924238366",
+                "8a1f9a771031a5d2"
+            ]
+        ]
+    },
+    {
+        "id": "95dc2fe924238366",
+        "type": "debug",
+        "z": "ba419cd70b9242b5",
+        "g": "e0e455d2e0871e77",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 500,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "8a1f9a771031a5d2",
+        "type": "function",
+        "z": "ba419cd70b9242b5",
+        "g": "e0e455d2e0871e77",
+        "name": "sync_command",
+        "func": "let packet_type = msg.topic;\nlet target_device = flow.get('target_device');\nlet type = flow.get('type');\nlet range = flow.get('range');\n\nif(packet_type == 'sync'){\n    if(msg.payload.type == 'sync_check_in'){\n        if(msg.payload.sensor_type == 21){\n            if(target_device == msg.payload.address){\n                msg.payload =  {\n                    address: target_device,\n                    // Master command\n                    data: [0x6C, 0x00, 0x00, 0x7F, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x3C, range, type]\n                }\n                return msg;\n            }\n        }\n    }\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 440,
+        "wires": [
+            [
+                "a430970ed38cbc82"
+            ]
+        ]
+    },
+    {
+        "id": "a430970ed38cbc82",
+        "type": "delay",
+        "z": "ba419cd70b9242b5",
+        "g": "e0e455d2e0871e77",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "500",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 700,
+        "y": 440,
+        "wires": [
+            [
+                "cbf36a47196c9305",
+                "2e1fb426f0f04354"
+            ]
+        ]
+    },
+    {
+        "id": "3e6ed4f76358178c",
+        "type": "comment",
+        "z": "ba419cd70b9242b5",
+        "g": "d83262eda86f55c7",
+        "name": "For AMS5812: \\n \\n   \tAMS5812_0000_D -- 0\\n \tAMS5812_0001_D -- 1\\n \tAMS5812_0000_D_B -- 2\\n \tAMS5812_0001_D_B -- 3\\n \tAMS5812_0003_D -- 4\\n \tAMS5812_0008_D -- 5\\n \tAMS5812_0015_D -- 6\\n \tAMS5812_0003_D_B -- 7\\n \tAMS5812_0008_D_B -- 8\\n \tAMS5812_0015_D_B -- 9\\n \tAMS5812_0030_D -- 10\\n \tAMS5812_0050_D -- 11\\n \tAMS5812_0150_D -- 12\\n \tAMS5812_0300_D -- 13\\n \tAMS5812_0600_D -- 14\\n \tAMS5812_1000_D -- 15\\n \tAMS5812_0030_D_B -- 16\\n \tAMS5812_0050_D_B -- 17\\n \tAMS5812_0150_D_B -- 18\\n \tAMS5812_0150_B -- 19\\n \tAMS5812_0150_A -- 20\\n \tAMS5812_0300_A -- 21",
+        "info": "",
+        "x": 550,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "37d93268d3ca922e",
+        "type": "comment",
+        "z": "ba419cd70b9242b5",
+        "g": "d83262eda86f55c7",
+        "name": "For AMS5915: \\n \\n  \tAMS5915_0005_D -- 0\\n \tAMS5915_0010_D -- 1\\n \tAMS5915_0002_D_B -- 2\\n \tAMS5915_0005_D_B -- 3\\n \tAMS5915_0010_D_B -- 4\\n \tAMS5915_0020_D -- 5\\n \tAMS5915_0035_D -- 6\\n \tAMS5915_0050_D -- 7\\n \tAMS5915_0100_D -- 8\\n \tAMS5915_0020_D_B -- 9\\n \tAMS5915_0035_D_B -- 10\\n \tAMS5915_0050_D_B -- 11\\n \tAMS5915_0100_D_B -- 12\\n \tAMS5915_0200_D -- 13\\n \tAMS5915_0350_D -- 14\\n \tAMS5915_0500_D -- 15\\n \tAMS5915_1000_D -- 16\\n \tAMS5915_2000_D -- 17\\n \tAMS5915_4000_D -- 18\\n \tAMS5915_7000_D -- 19\\n \tAMS5915_10000_D -- 20\\n \tAMS5915_0200_D_B -- 21\\n \tAMS5915_0350_D_B -- 22\\n \tAMS5915_0500_D_B -- 23\\n \tAMS5915_1000_D_B -- 24",
+        "info": "",
+        "x": 790,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "d40fefc08e392c4d",
+        "type": "comment",
+        "z": "ba419cd70b9242b5",
+        "g": "d83262eda86f55c7",
+        "name": "For AMS5935:\\n \\n \tAMS5935_0002_D -- 0\\n \tAMS5935_0005_D -- 1\\n \tAMS5935_0010_D -- 2\\n \tAMS5935_0001_D_B -- 3\\n \tAMS5935_0002_D_B -- 4\\n \tAMS5935_0005_D_B -- 5\\n \tAMS5935_0010_D_B -- 6\\n \tAMS5935_0020_D -- 7\\n \tAMS5935_0035_D -- 8\\n \tAMS5935_0050_D -- 9\\n \tAMS5935_0100_D -- 10\\n \tAMS5935_0020_D_B -- 11\\n \tAMS5935_0035_D_B -- 12\\n \tAMS5935_0050_D_B -- 13\\n \tAMS5935_0100_D_B -- 14\\n \tAMS5935_0200_D -- 15\\n \tAMS5935_0350_D -- 16\\n \tAMS5935_0500_D -- 17\\n \tAMS5935_1000_D -- 18\\n \tAMS5935_0200_D_B -- 19\\n \tAMS5935_0350_D_B -- 20\\n \tAMS5935_0500_D_B -- 21\\n \tAMS5935_1000_D_B -- 22\\n \tAMS5935_0500_A -- 23\\n \tAMS5935_1000_A -- 24\\n \tAMS5935_1500_A -- 25\\n \tAMS5935_2000_A -- 26\\n \tAMS5935_1200_B -- 27",
+        "info": "",
+        "x": 1030,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "2dc590b0995e8d2a",
+        "type": "comment",
+        "z": "ba419cd70b9242b5",
+        "g": "d83262eda86f55c7",
+        "name": "Sensor Range Options",
+        "info": "",
+        "x": 540,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "29a26b0f555067a3",
+        "type": "change",
+        "z": "ba419cd70b9242b5",
+        "g": "45c8b3f2c99920b2",
+        "name": "Settings",
+        "rules": [
+            {
+                "t": "set",
+                "p": "target_device",
+                "pt": "flow",
+                "to": "00:13:a2:00:42:53:64:53",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "type",
+                "pt": "flow",
+                "to": "2",
+                "tot": "num"
+            },
+            {
+                "t": "set",
+                "p": "range",
+                "pt": "flow",
+                "to": "10",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 380,
+        "y": 160,
+        "wires": [
+            []
+        ],
+        "icon": "node-red/cog.svg"
+    },
+    {
+        "id": "2f884b75ea160877",
+        "type": "inject",
+        "z": "ba419cd70b9242b5",
+        "g": "45c8b3f2c99920b2",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 230,
+        "y": 160,
+        "wires": [
+            [
+                "29a26b0f555067a3"
+            ]
+        ]
+    },
+    {
+        "id": "629880c82a10ea7a",
+        "type": "comment",
+        "z": "ba419cd70b9242b5",
+        "g": "d83262eda86f55c7",
+        "name": "Sensor Type Options",
+        "info": "",
+        "x": 250,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "b53e52385344b629",
+        "type": "comment",
+        "z": "ba419cd70b9242b5",
+        "g": "d83262eda86f55c7",
+        "name": "AMS5812 -- 0\\n AMS5915 -- 1\\n AMS5935 -- 2",
+        "info": "",
+        "x": 230,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "2e1fb426f0f04354",
+        "type": "debug",
+        "z": "ba419cd70b9242b5",
+        "g": "e0e455d2e0871e77",
+        "name": "command",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "e8a2f29b7bd43028",
+        "type": "comment",
+        "z": "ba419cd70b9242b5",
+        "g": "45c8b3f2c99920b2",
+        "name": "Set sensor target and settings here. See Type and Range Options Below",
+        "info": "",
+        "x": 420,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "5b763922e0559236",
+        "type": "comment",
+        "z": "ba419cd70b9242b5",
+        "g": "e0e455d2e0871e77",
+        "name": "Set Wireless Gatewa Node's \"Serial Device\"",
+        "info": "",
+        "x": 330,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "bd2192704b51525a",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@ncd-io/node-red-enterprise-sensors": "3.0.5"
+        }
+    }
+]
